@@ -1,0 +1,2 @@
+# real-time-data-processing
+Service that Receive packets of data in real-time and pass this on to an ancillary service for processing,Collate the output from the ancillary service for a particular Primary Resource ID into a single data packet. And once all data packets for a particular Resource are received, pass on the collated output data further for downstream processing with minimum latency by calling a webhook.
