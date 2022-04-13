@@ -1,0 +1,12 @@
+Assumptions:
+
+    System :
+        1. The real time data are generating from multiple servers/clients which are being published in to AWS Kinesis.
+        2. There will be kinesis consumer in our service which polls for data {long polling}.
+            https://www.arundhaj.com/blog/getting-started-kinesis-python.html
+
+The reason I took a sqs queue instead of kinesis/kafka is, 
+it's best practise if we filter/process data before we send to another service. In this case once the data is completely transformed
+down stream services consume in a squeential manner to have a data integrity.
+        
+

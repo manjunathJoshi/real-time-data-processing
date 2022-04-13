@@ -1,0 +1,80 @@
+version: '3.4'
+
+services:
+
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+  redis_scheduler:
+    container_name: redis_scheduler
+    hostname: redis_scheduler
+    image: redis:latest
+    ports:
+      - "6380:6380"
+    restart: on-failure
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=butterfly_postgres
+    ports:
+      - "5430:5432"
+    restart: on-failure
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+
+  butterfly:
+    build: .
+    # volumes:
+    #  -  $PWD/Butterfly:/rest/Butterfly
+    command: sh -c "python3 manage.py collectstatic --no-input && python manage.py migrate && gunicorn Butterfly.wsgi -b 0.0.0.0:8000"
+    container_name: butterfly
+    env_file:
+      dev-environment.env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    hostname: butterfly
+    image: butterfly
+    restart: on-failure
+
+  celery_worker:
+    command: sh -c "celery -A Butterfly worker -l info -Q task"
+    container_name: celery_worker
+    env_file:
+      dev-environment.env
+    depends_on:
+      - butterfly
+      - postgres
+      - redis
+    hostname: celery_worker
+    image: butterfly
+    restart: on-failure
+
+  celery_beat:
+    command: sh -c "celery -A Butterfly beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    container_name: celery_beat
+    env_file:
+      dev-environment.env
+    depends_on:
+      - butterfly
+      - postgres
+      - redis_scheduler
+    hostname: celery_beat
+    image: butterfly
+    restart: on-failure
+
+volumes:
+  postgresql-data:
