@@ -34,8 +34,8 @@ services:
 
   butterfly:
     build: .
-    # volumes:
-    #  -  $PWD/Butterfly:/rest/Butterfly
+    volumes:
+     -  $PWD/Butterfly:/rest/Butterfly
     command: sh -c "python3 manage.py collectstatic --no-input && python manage.py migrate && gunicorn Butterfly.wsgi -b 0.0.0.0:8000"
     container_name: butterfly
     env_file:

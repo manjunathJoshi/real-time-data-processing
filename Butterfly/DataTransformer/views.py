@@ -22,7 +22,7 @@ class TransformData(View):
 			request_body = request.POST
 			primary_resource_id = int(request_body.get('primary_resource_id',''))
 			data_packet_index = int(request_body.get('data_packet_index',''))
-			last_chunk_flag = False
+			last_chunk_flag = True if request_body.get('last_chunk_flag') == 'True' else False
 			file = request.FILES.get('file','')
 			raw_payload = None
 			for i in file:

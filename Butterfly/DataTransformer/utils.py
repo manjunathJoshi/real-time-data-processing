@@ -27,3 +27,5 @@ def insert_packet_data(primary_resource_id,data_packet_index,raw_payload,last_ch
         logger.exception(str(e))
         raise Exception(str(e))
 
+# def data_yield():
+

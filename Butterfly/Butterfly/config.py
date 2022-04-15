@@ -11,5 +11,7 @@ SERVER_DATABASES = {
 		'PORT': os.environ.get('POSTGRES_PORT'),
 	}
 }
-CELERY_SYNC = eval(os.environ.get('CELERY_SYNC'))
+CELERY_SYNC = True
 DOWN_STREAM_QUEUE = os.environ.get('DOWN_STREAM_QUEUE')
+S3_BUCKET = os.environ.get('S3_BUCKET')
+DOWNSTREAM_API_URL = os.environ.get('DOWNSTREAM_API_URL')

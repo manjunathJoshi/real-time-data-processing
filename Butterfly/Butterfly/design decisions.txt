@@ -1,0 +1,21 @@
+Data stored in database : Becuase there will be no provision of retransmission.
+Separte execution of ancillary in celery : 
+    To scale accoringly : If more load at ancillary, We can increase the pod size of celery,
+    celery execution for ancillar service is also an sync call.
+    celery service will update data when it is done processing. We will be pushing into fifo queue so that we dont loss any data.
+
+#There are (at least) two available design choices to get the packets in order and process through the 
+#ncillary service: utilize the packets as and when we receive them, or use them when we have all the data with us. 
+#We would love to see an explanation of what you choose and why!
+    Explaination:
+        We are building a service which transforms data and pass it to another service which consumes it.
+        If a data is yet to transform/ unknown of it completion we should not pass on the data to the service
+        main reason being: Why make a overhead in all consumer services to maintain the order.(I prefer it to be in a single place
+        which is before transmission.) Helps in scalability.
+                                        HOW? lets assume a service does n tasks and also waits for this data to process and transfer it to another service
+                                        If we bulk up that service with this overhead of ordering, analysing and sending we put too much
+                                        unessasarry overhead to service where we might have to increase its capasity.
+                                            same goes with service x+1
+
+
+

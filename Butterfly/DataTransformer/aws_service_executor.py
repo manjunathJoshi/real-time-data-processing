@@ -1,6 +1,7 @@
 import boto3
 from Butterfly.utils import logger
 from DataTransformer.utils import insert_packet_data
+from botocore.exceptions import NoCredentialsError
 
 def poll_for_kinesis_events():
     try:
@@ -21,6 +22,7 @@ def poll_for_kinesis_events():
                                             primary_resource_id=record['PartitionKey'],
                                             raw_payload=record['Data'],
                                             last_chunk_flag=records['NextShardIterator'])
+            logger.info("Polled for kinesis")
             return result
     except Exception as e:
         logger.exception(str(e))
@@ -54,3 +56,14 @@ def poll_for_kinesis_events():
 # 	]
 # }
 
+# machine level access to aws s3
+
+def upload_to_aws_s3(local_file, bucket, s3_file):
+    s3 = boto3.client('s3')
+    try:
+        response = s3.upload_file(local_file, bucket, s3_file)
+        logger.info("Upload Successful")
+        return response
+    except Exception as e:
+        logger.error("Error uploading")
+        return False
